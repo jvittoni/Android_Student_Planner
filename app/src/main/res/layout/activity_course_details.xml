@@ -7,4 +7,132 @@
     android:layout_height="match_parent"
     tools:context=".UI.CourseDetails">
 
+    <LinearLayout
+        android:id="@+id/courseDetailsLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="1dp"
+        android:paddingTop="30dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:background="#c9efff"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:padding="10dp"
+                    android:textStyle="bold"
+                    android:text="Class: "/>
+
+                <EditText
+                    android:id="@+id/courseTitleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:inputType="text"
+                    android:hint="name of class"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:padding="10dp"
+                    android:textStyle="bold"
+                    android:text="Instructor: "/>
+
+                <EditText
+                    android:id="@+id/courseInstructorText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:inputType="text"
+                    android:hint="name of instructor"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:padding="10dp"
+                    android:textStyle="bold"
+                    android:text="Start Date: "/>
+
+                <Button
+                    android:id="@+id/selectStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:hint="Select Start Date"
+                    android:inputType="date"
+                    android:textColor="#000000"
+                    android:backgroundTint="#faf6f6"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:padding="10dp"
+                    android:textStyle="bold"
+                    android:text="End Date: "/>
+
+                <Button
+                    android:id="@+id/selectEnd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:hint="Select End Date"
+                    android:inputType="date"
+                    android:textColor="#000000"
+                    android:backgroundTint="#faf6f6"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:padding="10dp"
+                    android:textStyle="bold"
+                    android:text="Description: "/>
+
+                <EditText
+                    android:id="@+id/courseInstructorText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:hint="description of class"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
