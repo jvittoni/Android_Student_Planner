@@ -13,14 +13,18 @@
         android:theme="@style/Theme.StudentPlanner03"
         tools:targetApi="31">
         <activity
-            android:name=".UI.CourseList"
-            android:label="Course List"
-            android:parentActivityName=".UI.MainActivity"
+            android:name=".UI.CourseDetails"
+            android:label="Class Details and Assignment List"
             android:exported="false" />
         <activity
+            android:name=".UI.CourseList"
+            android:exported="false"
+            android:label="Class List"
+            android:parentActivityName=".UI.MainActivity" />
+        <activity
             android:name=".UI.MainActivity"
-            android:label="Main Activity"
-            android:exported="true">
+            android:exported="true"
+            android:label="Main Activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
