@@ -124,7 +124,7 @@
                     android:text="Description: "/>
 
                 <EditText
-                    android:id="@+id/courseInstructorText"
+                    android:id="@+id/courseDescriptionText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
