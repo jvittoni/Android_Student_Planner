@@ -15,6 +15,7 @@
         <activity
             android:name=".UI.CourseDetails"
             android:label="Class Details and Assignment List"
+            android:parentActivityName=".UI.CourseList"
             android:exported="false" />
         <activity
             android:name=".UI.CourseList"
