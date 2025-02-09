@@ -14,9 +14,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.studentplanner03.R;
+import com.example.studentplanner03.database.Repository;
+import com.example.studentplanner03.entities.Assignment;
+import com.example.studentplanner03.entities.Course;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class CourseList extends AppCompatActivity {
+
+    private Repository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +57,21 @@ public class CourseList extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.mySampleCode) {
-            Toast.makeText(CourseList.this, "put in sample data", Toast.LENGTH_LONG).show();
+//            Toast.makeText(CourseList.this, "put in sample data", Toast.LENGTH_LONG).show();
+            repository = new Repository(getApplication());
+
+            Course course = new Course(0, "Course1", "Instructor1", "03/01/25", "06/01/25", "This is course1");
+            repository.insert(course);
+
+            course = new Course(0, "Course2", "Instructor2", "03/01/25", "06/01/25", "This is course2");
+            repository.insert(course);
+
+            Assignment assignment = new Assignment(0, "Homework1", "03/05/25", "This is homework1", 1);
+            repository.insert(assignment);
+
+            assignment = new Assignment(0, "Homework2", "03/05/25", "This is homework2", 1);
+            repository.insert(assignment);
+
             return true;
         }
         if(item.getItemId() == android.R.id.home) {
