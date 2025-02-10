@@ -12,12 +12,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studentplanner03.R;
 import com.example.studentplanner03.database.Repository;
 import com.example.studentplanner03.entities.Assignment;
 import com.example.studentplanner03.entities.Course;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.List;
 
 public class CourseList extends AppCompatActivity {
 
@@ -45,6 +49,14 @@ public class CourseList extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        RecyclerView recyclerView = findViewById(R.id.courseRecyclerView);
+        repository = new Repository(getApplication());
+        List<Course> allCourses = repository.getmAllCourses();
+        final CourseAdapter courseAdapter = new CourseAdapter(this);
+        recyclerView.setAdapter(courseAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        courseAdapter.setCourses(allCourses);
 
     }
 
