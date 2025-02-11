@@ -7,4 +7,91 @@
     android:layout_height="match_parent"
     tools:context=".UI.AssignmentDetails">
 
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:background="#cdefcc"
+        android:orientation="vertical"
+        android:paddingTop="50dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:padding="10dp"
+                android:textStyle="bold"
+                android:text="Assignment:" />
+
+            <EditText
+                android:id="@+id/assignmentTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:hint="name of assignment"
+                android:inputType="text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:padding="10dp"
+                android:textStyle="bold"
+                android:text="Due Date: " />
+
+            <Button
+                android:id="@+id/assignmentDueDate"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:backgroundTint="#faf6f6"
+                android:hint="Select Assignment Due Date"
+                android:inputType="date"
+                android:textColor="#000000" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:padding="10dp"
+                android:textStyle="bold"
+                android:text="Description:" />
+
+            <EditText
+                android:id="@+id/assignmentDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="description of assignment"
+                android:inputType="textMultiLine" />
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
