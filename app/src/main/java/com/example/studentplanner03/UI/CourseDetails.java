@@ -2,6 +2,8 @@ package com.example.studentplanner03.UI;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -16,7 +18,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studentplanner03.R;
 import com.example.studentplanner03.database.Repository;
+import com.example.studentplanner03.entities.Course;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.List;
 
 public class CourseDetails extends AppCompatActivity {
 
@@ -93,4 +98,30 @@ public class CourseDetails extends AppCompatActivity {
         assignmentAdapter.setAssignments(repository.getmAllAssignments());
 
     }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_coursedetails, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.saveCourse) {
+            Course course;
+            if (courseID == -1) {
+                if (repository.getmAllCourses().size() == 0) courseID = 1;
+                else courseID = repository.getmAllCourses().get(repository.getmAllCourses().size() - 1).getCourseID() + 1;
+                course = new Course(courseID, editCourseName.getText().toString(), editCourseInstructor.getText().toString(), editCourseStartDate.getText().toString(), editCourseEndDate.getText().toString(), editCourseDescription.getText().toString());
+                repository.insert(course);
+                this.finish();
+            }
+            else {
+                course = new Course(courseID, editCourseName.getText().toString(), editCourseInstructor.getText().toString(), editCourseStartDate.getText().toString(), editCourseEndDate.getText().toString(), editCourseDescription.getText().toString());
+                repository.update(course);
+                this.finish();
+            }
+        }
+        return true;
+    }
+
+
 }
