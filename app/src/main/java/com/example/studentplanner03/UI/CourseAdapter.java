@@ -19,10 +19,10 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
 
     private List<Course> mCourses;
     private final Context context;
-    private final LayoutInflater mInflator;
+    private final LayoutInflater mInflater;
 
     public CourseAdapter(Context context) {
-        mInflator = LayoutInflater.from(context);
+        mInflater = LayoutInflater.from(context);
         this.context = context;
     }
 
@@ -39,7 +39,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
                     int position = getAdapterPosition();
                     final Course current = mCourses.get(position);
                     Intent intent = new Intent(context, CourseDetails.class);
-                    intent.putExtra("crseId", current.getCourseID());
+                    intent.putExtra("crseID", current.getCourseID());
                     intent.putExtra("crseName", current.getCourseName());
                     intent.putExtra("crseInstruct", current.getCourseInstructor());
                     intent.putExtra("crseStartDate", current.getCourseStartDate());
@@ -54,7 +54,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     @NonNull
     @Override
     public CourseAdapter.CourseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = mInflator.inflate(R.layout.course_list_item, parent, false);
+        View itemView = mInflater.inflate(R.layout.course_list_item, parent, false);
         return new CourseViewHolder(itemView);
     }
 
