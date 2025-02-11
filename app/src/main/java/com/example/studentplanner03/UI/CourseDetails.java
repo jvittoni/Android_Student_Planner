@@ -3,6 +3,8 @@ package com.example.studentplanner03.UI;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +20,19 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class CourseDetails extends AppCompatActivity {
 
+    String courseName;
+    String courseInstructor;
+    String courseStartDate;
+    String courseEndDate;
+    String courseDescription;
+    int courseID;
+
+    EditText editCourseName;
+    EditText editCourseInstructor;
+    TextView editCourseStartDate;
+    TextView editCourseEndDate;
+    EditText editCourseDescription;
+
     Repository repository;
 
     @Override
@@ -30,6 +45,35 @@ public class CourseDetails extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Course ID
+        courseID = getIntent().getIntExtra("crseID", -1);
+
+        // Course Name
+        editCourseName = findViewById(R.id.courseTitleText);
+        courseName = getIntent().getStringExtra("crseName");
+        editCourseName.setText(courseName);
+
+        // Course Instructor
+        editCourseInstructor = findViewById(R.id.courseInstructorText);
+        courseInstructor = getIntent().getStringExtra("crseInstruct");
+        editCourseInstructor.setText(courseInstructor);
+
+        // Course Start Date
+        editCourseStartDate = findViewById(R.id.selectStart);
+        courseStartDate = getIntent().getStringExtra("crseStartDate");
+        editCourseStartDate.setText(courseStartDate);
+
+        // Course End Date
+        editCourseEndDate = findViewById(R.id.selectEnd);
+        courseEndDate = getIntent().getStringExtra("crseEndDate");
+        editCourseEndDate.setText(courseStartDate);
+
+        // Course Description
+        editCourseDescription = findViewById(R.id.courseDescriptionText);
+        courseDescription = getIntent().getStringExtra("crseDesc");
+        editCourseDescription.setText(courseDescription);
+
 
         FloatingActionButton fab = findViewById(R.id.floatingActionButton2);
         fab.setOnClickListener(new View.OnClickListener() {
