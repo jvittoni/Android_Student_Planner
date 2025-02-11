@@ -53,6 +53,8 @@ public class CourseDetails extends AppCompatActivity {
             return insets;
         });
 
+        repository = new Repository(getApplication());
+
         // Course ID
         courseID = getIntent().getIntExtra("crseID", -1);
 
@@ -87,6 +89,7 @@ public class CourseDetails extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(CourseDetails.this, AssignmentDetails.class);
+                intent.putExtra("crseID", courseID);
                 startActivity(intent);
             }
         });
@@ -136,5 +139,21 @@ public class CourseDetails extends AppCompatActivity {
         return true;
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        RecyclerView recyclerView = findViewById(R.id.assignmentRecyclerView);
+        repository = new Repository(getApplication());
+        final AssignmentAdapter assignmentAdapter = new AssignmentAdapter(this);
+        recyclerView.setAdapter(assignmentAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        List<Assignment> filteredAssignments = new ArrayList<>();
+        for (Assignment a :repository.getmAllAssignments()) {
+            if (a.getCourseID() == courseID) filteredAssignments.add(a);
+        }
+        assignmentAdapter.setAssignments(filteredAssignments);
+    }
 
 }
