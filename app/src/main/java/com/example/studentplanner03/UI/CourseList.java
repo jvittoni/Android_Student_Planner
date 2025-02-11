@@ -67,6 +67,17 @@ public class CourseList extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        List<Course> allCourses = repository.getmAllCourses();
+        RecyclerView recyclerView = findViewById(R.id.courseRecyclerView);
+        final CourseAdapter courseAdapter = new CourseAdapter(this);
+        recyclerView.setAdapter(courseAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        courseAdapter.setCourses(allCourses);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.mySampleCode) {
 //            Toast.makeText(CourseList.this, "put in sample data", Toast.LENGTH_LONG).show();
