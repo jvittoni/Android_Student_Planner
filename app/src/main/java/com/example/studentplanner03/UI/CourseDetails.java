@@ -9,11 +9,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studentplanner03.R;
+import com.example.studentplanner03.database.Repository;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class CourseDetails extends AppCompatActivity {
+
+    Repository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,5 +39,14 @@ public class CourseDetails extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // show associated assignments
+        RecyclerView recyclerView = findViewById(R.id.assignmentRecyclerView);
+        repository = new Repository(getApplication());
+        final AssignmentAdapter assignmentAdapter = new AssignmentAdapter(this);
+        recyclerView.setAdapter(assignmentAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        assignmentAdapter.setAssignments(repository.getmAllAssignments());
+
     }
 }

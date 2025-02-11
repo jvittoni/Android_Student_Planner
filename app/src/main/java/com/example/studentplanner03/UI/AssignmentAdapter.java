@@ -21,13 +21,8 @@ public class AssignmentAdapter extends RecyclerView.Adapter<AssignmentAdapter.As
     private final Context context;
     private final LayoutInflater mInflater;
 
-    public AssignmentAdapter(Context context) {
-        mInflater = LayoutInflater.from(context);
-        this.context = context;
-    }
 
-
-    public class AssignmentViewHolder extends RecyclerView.ViewHolder{
+    public class AssignmentViewHolder extends RecyclerView.ViewHolder {
         private final TextView assignmentItemView;
         private final TextView assignmentItemView2;
 
@@ -41,23 +36,27 @@ public class AssignmentAdapter extends RecyclerView.Adapter<AssignmentAdapter.As
                     int position = getAdapterPosition();
                     final Assignment current = mAssignments.get(position);
                     Intent intent = new Intent(context, AssignmentDetails.class);
-                    intent.putExtra("assignmId", current.getAssignmentID());
+                    intent.putExtra("assignmID", current.getAssignmentID());
                     intent.putExtra("assignmName", current.getAssignmentName());
                     intent.putExtra("assignmDD", current.getAssignmentDueDate());
                     intent.putExtra("assignmDesc", current.getAssignmentDescription());
                     intent.putExtra("crseID", current.getCourseID());
+                    context.startActivity(intent);
                 }
             });
         }
-
     }
 
+    public AssignmentAdapter(Context context) {
+        mInflater = LayoutInflater.from(context);
+        this.context = context;
+    }
 
     @NonNull
     @Override
     public AssignmentAdapter.AssignmentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-       View itemView = mInflater.inflate(R.layout.assignment_list_item, parent, false);
-       return new AssignmentViewHolder(itemView);
+        View itemView = mInflater.inflate(R.layout.assignment_list_item,parent,false);
+        return new AssignmentViewHolder(itemView);
     }
 
     @Override
@@ -75,9 +74,14 @@ public class AssignmentAdapter extends RecyclerView.Adapter<AssignmentAdapter.As
         }
     }
 
+    public void setAssignments(List<Assignment> assignments) {
+        mAssignments = assignments;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
-        if (mAssignments != null ) return mAssignments.size();
+        if (mAssignments != null) return mAssignments.size();
         else return 0;
     }
 
