@@ -18,9 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studentplanner03.R;
 import com.example.studentplanner03.database.Repository;
+import com.example.studentplanner03.entities.Assignment;
 import com.example.studentplanner03.entities.Course;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CourseDetails extends AppCompatActivity {
@@ -89,14 +91,25 @@ public class CourseDetails extends AppCompatActivity {
             }
         });
 
-        // show associated assignments
+        // show all assignments
+//        RecyclerView recyclerView = findViewById(R.id.assignmentRecyclerView);
+//        repository = new Repository(getApplication());
+//        final AssignmentAdapter assignmentAdapter = new AssignmentAdapter(this);
+//        recyclerView.setAdapter(assignmentAdapter);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        assignmentAdapter.setAssignments(repository.getmAllAssignments());
+
+        // show only associated assignments
         RecyclerView recyclerView = findViewById(R.id.assignmentRecyclerView);
         repository = new Repository(getApplication());
         final AssignmentAdapter assignmentAdapter = new AssignmentAdapter(this);
         recyclerView.setAdapter(assignmentAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        assignmentAdapter.setAssignments(repository.getmAllAssignments());
-
+        List<Assignment> filteredAssignments = new ArrayList<>();
+        for (Assignment a :repository.getmAllAssignments()) {
+            if (a.getCourseID() == courseID) filteredAssignments.add(a);
+        }
+        assignmentAdapter.setAssignments(filteredAssignments);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
