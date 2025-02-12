@@ -8,4 +8,7 @@
     <item android:title="Delete Assignment"
         android:id="@+id/deleteAssignment"/>
 
+    <item android:title="Set Assignment Due Date Alert"
+        android:id="@+id/alertDueDate"/>
+
 </menu>

@@ -1,6 +1,10 @@
 package com.example.studentplanner03.UI;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +32,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class AssignmentDetails extends AppCompatActivity {
 
@@ -45,6 +50,10 @@ public class AssignmentDetails extends AppCompatActivity {
     final Calendar myCalendarAssignmentDeadline = Calendar.getInstance();
 
     Assignment currentAssignment;
+
+    // Notification Alert
+    Random rand = new Random();
+    int numAlert = rand.nextInt(99999);
 
     Repository repository;
 
@@ -81,6 +90,9 @@ public class AssignmentDetails extends AppCompatActivity {
         editAssignmentDescription = findViewById(R.id.assignmentDescription);
         assignmentDescription = getIntent().getStringExtra("assignmDesc");
         editAssignmentDescription.setText(assignmentDescription);
+
+        // Notification
+        numAlert = rand.nextInt(99999);
 
         ArrayList<Course> courseArrayList = new ArrayList<>();
         courseArrayList.addAll(repository.getmAllCourses());
@@ -199,7 +211,32 @@ public class AssignmentDetails extends AppCompatActivity {
             AssignmentDetails.this.finish();
         }
 
-        // TODO: Alert / Notification System
+        // Set Alert for Assignment Due Date
+        if (item.getItemId() == R.id.alertDueDate) {
+            String dateFromScreen = editAssignmentDueDate.getText().toString();
+            String alert = "Assignment: " + assignmentName + " is due today";
+
+            String myFormat = "MM/dd/yy";
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+            Date myDate = null;
+            try {
+                myDate = sdf.parse(dateFromScreen);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Long trigger = myDate.getTime();
+            Intent intent = new Intent(AssignmentDetails.this, MyReceiver.class);
+            intent.putExtra("key", alert);
+//            PendingIntent sender = PendingIntent.getBroadcast(ExcursionDetails.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
+            PendingIntent sender = PendingIntent.getBroadcast(AssignmentDetails.this, numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
+            numAlert = rand.nextInt(99999);
+            System.out.println("numAlert Assignment = " + numAlert);
+            Toast.makeText(AssignmentDetails.this, "Assignment Due Date Alert has been set", Toast.LENGTH_LONG).show();
+            this.finish();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
