@@ -162,6 +162,7 @@ public class AssignmentDetails extends AppCompatActivity {
             return true;
         }
 
+        // Save Assignment
         if (item.getItemId() == R.id.saveAssignment) {
             String myFormat = "MM/dd/yy";
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
@@ -202,6 +203,7 @@ public class AssignmentDetails extends AppCompatActivity {
             return true;
         }
 
+        // Delete Assignment
         if (item.getItemId() == R.id.deleteAssignment) {
             for (Assignment assignment : repository.getmAllAssignments()) {
                 if (assignment.getAssignmentID() == assignmentID) currentAssignment = assignment;
