@@ -4,6 +4,16 @@
 
     <item android:title="Save Class"
         android:id="@+id/saveCourse"/>
+
     <item android:title="Delete Class"
         android:id="@+id/deleteCourse"/>
+
+    <item android:title="Set Class Start Date Alert"
+        android:id="@+id/startCourseAlert"/>
+
+    <item android:title="Set Class End Date Alert"
+        android:id="@+id/endCourseAlert"/>
+
+    <item android:title="Set Class Start and End Date Alert"
+        android:id="@+id/bothCourseAlert"/>
 </menu>

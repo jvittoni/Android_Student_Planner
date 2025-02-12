@@ -1,6 +1,9 @@
 package com.example.studentplanner03.UI;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -32,6 +35,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class CourseDetails extends AppCompatActivity {
 
@@ -57,6 +61,10 @@ public class CourseDetails extends AppCompatActivity {
 
     Course currentCourse;
     int numAssignments;
+
+    // Notification Alert
+    Random rand = new Random();
+    int numAlert = rand.nextInt(99999);
 
     Repository repository;
 
@@ -105,7 +113,10 @@ public class CourseDetails extends AppCompatActivity {
         String myFormat = "MM/dd/yy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
+        // Notification
+        numAlert = rand.nextInt(99999);
 
+        // Floating action button to add assignments
         FloatingActionButton fab = findViewById(R.id.floatingActionButton2);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -292,13 +303,66 @@ public class CourseDetails extends AppCompatActivity {
             return true;
         }
 
-        // TODO: Alert / Notification System
+        // Set Course Start Date Alert
+        if (item.getItemId() == R.id.startCourseAlert) {
+            String dateFromScreen = editCourseStartDate.getText().toString();
+            String alert = "Class Starting Today: " + courseName;
+            alertPicker(dateFromScreen, alert);
+            Toast.makeText(CourseDetails.this, "Class Start Date Alert has been set", Toast.LENGTH_LONG).show();
+            this.finish();
+            return true;
+        }
+
+        // Set Course End Date Alert
+        if (item.getItemId() == R.id.endCourseAlert) {
+            String dateFromScreen = editCourseEndDate.getText().toString();
+            String alert = "Class Ending Today: " + courseName;
+            alertPicker(dateFromScreen, alert);
+            Toast.makeText(CourseDetails.this, "Class End Date Alert has been set.", Toast.LENGTH_LONG).show();
+            this.finish();
+            return true;
+        }
+
+        // Set Course Start Date and End Date Alert
+        if (item.getItemId() == R.id.bothCourseAlert) {
+            String dateFromScreen = editCourseStartDate.getText().toString();
+            String alert = "Class Starting Today: " + courseName;
+            alertPicker(dateFromScreen, alert);
+            dateFromScreen = editCourseEndDate.getText().toString();
+            alert = "Class Ending Today: " + courseName;
+            alertPicker(dateFromScreen, alert);
+            Toast.makeText(CourseDetails.this, "Class Start and End Date Alert has been set.", Toast.LENGTH_LONG).show();
+            this.finish();
+            return true;
+        }
+
 
         // TODO: Sharing Feature
 
 //        return true;
 
         return super.onOptionsItemSelected(item);
+    }
+
+    // Used for Course Date(s) Alerts
+    public void alertPicker(String dateFromScreen, String alert) {
+        String myFormat = "MM/dd/yy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        Date myDate = null;
+        try {
+            myDate = sdf.parse(dateFromScreen);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Long trigger = myDate.getTime();
+        Intent intent = new Intent(CourseDetails.this, MyReceiver.class);
+        intent.putExtra("key", alert);
+//        PendingIntent sender = PendingIntent.getBroadcast(VacationDetails.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent sender = PendingIntent.getBroadcast(CourseDetails.this, numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
+        numAlert = rand.nextInt(99999);
+        System.out.println("numAlert Vacation = " + numAlert);
     }
 
 
