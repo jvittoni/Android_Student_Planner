@@ -1,8 +1,11 @@
 package com.example.studentplanner03.UI;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -17,7 +20,12 @@ import com.example.studentplanner03.database.Repository;
 import com.example.studentplanner03.entities.Assignment;
 import com.example.studentplanner03.entities.Course;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class AssignmentDetails extends AppCompatActivity {
 
@@ -30,6 +38,10 @@ public class AssignmentDetails extends AppCompatActivity {
     EditText editAssignmentName;
     TextView editAssignmentDueDate;
     EditText editAssignmentDescription;
+
+    DatePickerDialog.OnDateSetListener assignmentDeadline;
+    final Calendar myCalendarAssignmentDeadline = Calendar.getInstance();
+
 
     Repository repository;
 
@@ -73,6 +85,55 @@ public class AssignmentDetails extends AppCompatActivity {
         for (Course course : courseArrayList) {
             courseIdList.add(course.getCourseID());
         }
+
+        // Date Format Validation
+        String myFormat = "MM/dd/yy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        if (assignmentDueDate != null) {
+            try {
+                Date excursionDate = sdf.parse(assignmentDueDate);
+                myCalendarAssignmentDeadline.setTime(excursionDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        editAssignmentDueDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Date date;
+
+                String info = editAssignmentDueDate.getText().toString();
+                if(info.equals("")) info = assignmentDueDate;
+                try {
+                    myCalendarAssignmentDeadline.setTime(sdf.parse(info));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                new DatePickerDialog(
+                        AssignmentDetails.this, assignmentDeadline, myCalendarAssignmentDeadline
+                        .get(Calendar.YEAR), myCalendarAssignmentDeadline.get(Calendar.MONTH),
+                        myCalendarAssignmentDeadline.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        assignmentDeadline = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                myCalendarAssignmentDeadline.set(Calendar.YEAR, year);
+                myCalendarAssignmentDeadline.set(Calendar.MONTH, monthOfYear);
+                myCalendarAssignmentDeadline.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabelAssignmentStart();
+            }
+        };
+
+    }
+
+    private void updateLabelAssignmentStart() {
+        String myFormat = "MM/dd/yy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        editAssignmentDueDate.setText(sdf.format(myCalendarAssignmentDeadline.getTime()));
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,6 +164,12 @@ public class AssignmentDetails extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateLabelAssignmentStart();
     }
 
 }
