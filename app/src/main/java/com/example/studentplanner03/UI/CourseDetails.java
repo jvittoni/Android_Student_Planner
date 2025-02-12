@@ -55,6 +55,9 @@ public class CourseDetails extends AppCompatActivity {
     final Calendar myCalendarStart = Calendar.getInstance();
     final Calendar myCalendarEnd = Calendar.getInstance();
 
+    Course currentCourse;
+    int numAssignments;
+
     Repository repository;
 
     @Override
@@ -177,7 +180,6 @@ public class CourseDetails extends AppCompatActivity {
 
 
         // Course End Date
-
         editCourseEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -235,22 +237,68 @@ public class CourseDetails extends AppCompatActivity {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+            return true;
+        }
+
+        // Save Course
         if (item.getItemId() == R.id.saveCourse) {
-            Course course;
-            if (courseID == -1) {
-                if (repository.getmAllCourses().size() == 0) courseID = 1;
-                else courseID = repository.getmAllCourses().get(repository.getmAllCourses().size() - 1).getCourseID() + 1;
-                course = new Course(courseID, editCourseName.getText().toString(), editCourseInstructor.getText().toString(), editCourseStartDate.getText().toString(), editCourseEndDate.getText().toString(), editCourseDescription.getText().toString());
-                repository.insert(course);
-                this.finish();
-            }
-            else {
-                course = new Course(courseID, editCourseName.getText().toString(), editCourseInstructor.getText().toString(), editCourseStartDate.getText().toString(), editCourseEndDate.getText().toString(), editCourseDescription.getText().toString());
-                repository.update(course);
-                this.finish();
+            String myFormat = "MM/dd/yy";
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+            String startDateString = sdf.format(myCalendarStart.getTime());
+            String endDateString = sdf.format(myCalendarEnd.getTime());
+            try {
+                Date startDate = sdf.parse(startDateString);
+                Date endDate = sdf.parse(endDateString);
+                if (endDate.before(startDate)) {
+                    Toast.makeText(CourseDetails.this, "Class end date must be AFTER class start date.", Toast.LENGTH_LONG).show();
+                } else {
+                    Course course;
+                    if (courseID == -1) {
+                        if (repository.getmAllCourses().size() == 0) courseID = 1;
+                        else courseID = repository.getmAllCourses().get(repository.getmAllCourses().size() - 1).getCourseID() + 1;
+                        course = new Course(courseID, editCourseName.getText().toString(), editCourseInstructor.getText().toString(), editCourseStartDate.getText().toString(), editCourseEndDate.getText().toString(), editCourseDescription.getText().toString());
+                        repository.insert(course);
+                        this.finish();
+                    }
+                    else {
+                        course = new Course(courseID, editCourseName.getText().toString(), editCourseInstructor.getText().toString(), editCourseStartDate.getText().toString(), editCourseEndDate.getText().toString(), editCourseDescription.getText().toString());
+                        repository.update(course);
+                        this.finish();
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
         }
-        return true;
+
+        // Delete Course
+        if (item.getItemId() == R.id.deleteCourse) {
+            for (Course crse : repository.getmAllCourses()) {
+                if (crse.getCourseID() == courseID) currentCourse = crse;
+            }
+            numAssignments = 0;
+            for (Assignment assignment : repository.getmAllAssignments()) {
+                if (assignment.getCourseID() == courseID) ++numAssignments;
+            }
+            if (numAssignments == 0) {
+                repository.delete(currentCourse);
+                Toast.makeText(CourseDetails.this, currentCourse.getCourseName() + " was deleted.", Toast.LENGTH_LONG).show();
+                CourseDetails.this.finish();
+            } else {
+                Toast.makeText(CourseDetails.this, "Can't delete a class with assignments.", Toast.LENGTH_LONG).show();
+            }
+            return true;
+        }
+
+        // TODO: Alert / Notification System
+
+        // TODO: Sharing Feature
+
+//        return true;
+
+        return super.onOptionsItemSelected(item);
     }
 
 
