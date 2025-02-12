@@ -66,6 +66,9 @@ public class CourseDetails extends AppCompatActivity {
     Random rand = new Random();
     int numAlert = rand.nextInt(99999);
 
+    // Sharing Associated Assignments
+    List<Assignment> filteredAssignments = new ArrayList<>();
+
     Repository repository;
 
     @Override
@@ -337,10 +340,27 @@ public class CourseDetails extends AppCompatActivity {
         }
 
 
-        // TODO: Sharing Feature
-
+        // Share Course Details (Course + Assignment information)
+        if (item.getItemId() == R.id.shareCourseDetails) {
+            Intent sentIntent = new Intent();
+            sentIntent.setAction(Intent.ACTION_SEND);
+            sentIntent.putExtra(Intent.EXTRA_TITLE, "Sharing Class Details");
+            StringBuilder shareData = new StringBuilder();
+            shareData.append("Class Name: " + editCourseName.getText().toString() + "\n");
+            shareData.append("Instructor: " + editCourseInstructor.getText().toString() + "\n");
+            shareData.append("Start Date: " + editCourseStartDate.getText().toString() + "\n");
+            shareData.append("End Date: " + editCourseEndDate.getText().toString() + "\n");
+            for (int i = 0; i < filteredAssignments.size(); i++) {
+                shareData.append((i + 1) + ") " + "Assignment Name: " + filteredAssignments.get(i).getAssignmentName() + "\n");
+                shareData.append((i + 1) + ") " + "Assignment Due Date: " + filteredAssignments.get(i).getAssignmentDueDate() + "\n");
+            }
+            sentIntent.putExtra(Intent.EXTRA_TEXT, shareData.toString());
+            sentIntent.setType("text/plain");
+            Intent shareIntent = Intent.createChooser(sentIntent, null);
+            startActivity(shareIntent);
+            return true;
+        }
 //        return true;
-
         return super.onOptionsItemSelected(item);
     }
 

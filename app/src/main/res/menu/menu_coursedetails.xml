@@ -16,4 +16,8 @@
 
     <item android:title="Set Class Start and End Date Alert"
         android:id="@+id/bothCourseAlert"/>
+
+    <item android:title="Share Class Details"
+        android:id="@+id/shareCourseDetails"/>
+
 </menu>
