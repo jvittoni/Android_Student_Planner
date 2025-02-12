@@ -1,12 +1,15 @@
 package com.example.studentplanner03.UI;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,8 +25,13 @@ import com.example.studentplanner03.entities.Assignment;
 import com.example.studentplanner03.entities.Course;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class CourseDetails extends AppCompatActivity {
 
@@ -39,6 +47,13 @@ public class CourseDetails extends AppCompatActivity {
     TextView editCourseStartDate;
     TextView editCourseEndDate;
     EditText editCourseDescription;
+
+
+    // Course start date and end date
+    DatePickerDialog.OnDateSetListener crseStartDate;
+    DatePickerDialog.OnDateSetListener crseEndDate;
+    final Calendar myCalendarStart = Calendar.getInstance();
+    final Calendar myCalendarEnd = Calendar.getInstance();
 
     Repository repository;
 
@@ -83,6 +98,10 @@ public class CourseDetails extends AppCompatActivity {
         courseDescription = getIntent().getStringExtra("crseDesc");
         editCourseDescription.setText(courseDescription);
 
+        // Course date format validation
+        String myFormat = "MM/dd/yy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
 
         FloatingActionButton fab = findViewById(R.id.floatingActionButton2);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +132,101 @@ public class CourseDetails extends AppCompatActivity {
             if (a.getCourseID() == courseID) filteredAssignments.add(a);
         }
         assignmentAdapter.setAssignments(filteredAssignments);
+
+        // Handle Null
+        if (courseStartDate != null) {
+            try {
+                Date startDate = sdf.parse(courseStartDate);
+                Date endDate = sdf.parse(courseEndDate);
+                myCalendarStart.setTime(startDate);
+                myCalendarEnd.setTime(endDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Course Start Date
+        editCourseStartDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Date date;
+                String info = editCourseStartDate.getText().toString();
+
+                if(info.equals(""))info= courseStartDate;
+                try{
+                    myCalendarStart.setTime(sdf.parse(info));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                new DatePickerDialog(CourseDetails.this, crseStartDate, myCalendarStart
+                        .get(Calendar.YEAR), myCalendarStart.get(Calendar.MONTH),
+                        myCalendarStart.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        crseStartDate = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                myCalendarStart.set(Calendar.YEAR, year);
+                myCalendarStart.set(Calendar.MONTH, monthOfYear);
+                myCalendarStart.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                updateLabelStart();
+            }
+        };
+
+
+        // Course End Date
+
+        editCourseEndDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Date date;
+                String info = editCourseEndDate.getText().toString();
+
+                if(info.equals(""))info= courseEndDate;
+                try{
+                    myCalendarEnd.setTime(sdf.parse(info));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                new DatePickerDialog(CourseDetails.this, crseEndDate, myCalendarEnd
+                        .get(Calendar.YEAR), myCalendarEnd.get(Calendar.MONTH),
+                        myCalendarEnd.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        crseEndDate = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                myCalendarEnd.set(Calendar.YEAR, year);
+                myCalendarEnd.set(Calendar.MONTH, monthOfYear);
+                myCalendarEnd.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                // Validate that vacation end date is after vacation start date
+                if (myCalendarEnd.before(myCalendarStart)) {
+                    Toast.makeText(CourseDetails.this, "Class end date must be AFTER class start date.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                updateLabelEnd();
+            }
+        };
+
+    }
+
+    private void updateLabelStart() {
+        String myFormat = "MM/dd/yy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        editCourseStartDate.setText(sdf.format(myCalendarStart.getTime()));
+    }
+
+    private void updateLabelEnd() {
+        String myFormat = "MM/dd/yy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        editCourseEndDate.setText(sdf.format(myCalendarEnd.getTime()));
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -154,6 +268,10 @@ public class CourseDetails extends AppCompatActivity {
             if (a.getCourseID() == courseID) filteredAssignments.add(a);
         }
         assignmentAdapter.setAssignments(filteredAssignments);
+
+        // Class start and end dates
+        updateLabelStart();
+        updateLabelEnd();
     }
 
 }
