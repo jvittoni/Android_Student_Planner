@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class AssignmentDetails extends AppCompatActivity {
@@ -42,6 +44,7 @@ public class AssignmentDetails extends AppCompatActivity {
     DatePickerDialog.OnDateSetListener assignmentDeadline;
     final Calendar myCalendarAssignmentDeadline = Calendar.getInstance();
 
+    Assignment currentAssignment;
 
     Repository repository;
 
@@ -146,23 +149,58 @@ public class AssignmentDetails extends AppCompatActivity {
             this.finish();
             return true;
         }
+
         if (item.getItemId() == R.id.saveAssignment) {
-            Assignment assignment;
-            if (assignmentID == -1) {
-                if (repository.getmAllAssignments().size() == 0)
-                    assignmentID = 1;
-                else
-                    assignmentID = repository.getmAllAssignments().get(repository.getmAllAssignments().size() - 1).getAssignmentID() + 1;
-                assignment = new Assignment(assignmentID, editAssignmentName.getText().toString(), editAssignmentDueDate.getText().toString(), editAssignmentDescription.getText().toString(), courseID);
-                repository.insert(assignment);
-                this.finish();
-            } else {
-                assignment = new Assignment(assignmentID, editAssignmentName.getText().toString(), editAssignmentDueDate.getText().toString(), editAssignmentDescription.getText().toString(), courseID);
-                repository.update(assignment);
-                this.finish();
+            String myFormat = "MM/dd/yy";
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+            String assignmentDateString = sdf.format(myCalendarAssignmentDeadline.getTime());
+            Course course = null;
+            List<Course> courses = repository.getmAllCourses();
+            for (Course crs : courses) {
+                if (crs.getCourseID() == courseID) {
+                    course = crs;
+                }
+            }
+            try {
+                Date assignmentDate = sdf.parse(assignmentDateString);
+                Date startDate = sdf.parse(course.getCourseStartDate());
+                Date endDate = sdf.parse(course.getCourseEndDate());
+                if (assignmentDate.before(startDate) || assignmentDate.after(endDate)) {
+                    Toast.makeText(this, "Assignment due date must be set during the associated class.", Toast.LENGTH_LONG).show();
+                    return true;
+                } else {
+                    Assignment assignment;
+                    if (assignmentID == -1) {
+                        if (repository.getmAllAssignments().size() == 0)
+                            assignmentID = 1;
+                        else
+                            assignmentID = repository.getmAllAssignments().get(repository.getmAllAssignments().size() - 1).getAssignmentID() + 1;
+                        assignment = new Assignment(assignmentID, editAssignmentName.getText().toString(), editAssignmentDueDate.getText().toString(), editAssignmentDescription.getText().toString(), courseID);
+                        repository.insert(assignment);
+                        this.finish();
+                    } else {
+                        assignment = new Assignment(assignmentID, editAssignmentName.getText().toString(), editAssignmentDueDate.getText().toString(), editAssignmentDescription.getText().toString(), courseID);
+                        repository.update(assignment);
+                        this.finish();
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
             return true;
         }
+
+        if (item.getItemId() == R.id.deleteAssignment) {
+            for (Assignment assignment : repository.getmAllAssignments()) {
+                if (assignment.getAssignmentID() == assignmentID) currentAssignment = assignment;
+            }
+            repository.delete(currentAssignment);
+            Toast.makeText(AssignmentDetails.this, currentAssignment.getAssignmentName() + " has been deleted.", Toast.LENGTH_LONG).show();
+            AssignmentDetails.this.finish();
+        }
+
+        // TODO: Alert / Notification System
+
         return super.onOptionsItemSelected(item);
     }
 

@@ -4,4 +4,8 @@
 
     <item android:title="Save Assignment"
         android:id="@+id/saveAssignment"/>
+
+    <item android:title="Delete Assignment"
+        android:id="@+id/deleteAssignment"/>
+
 </menu>
