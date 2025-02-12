@@ -33,6 +33,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AssignmentDetails extends AppCompatActivity {
 
@@ -114,35 +116,27 @@ public class AssignmentDetails extends AppCompatActivity {
             }
         }
 
-        editAssignmentDueDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Date date;
-
-                String info = editAssignmentDueDate.getText().toString();
-                if(info.equals("")) info = assignmentDueDate;
-                try {
-                    myCalendarAssignmentDeadline.setTime(sdf.parse(info));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                new DatePickerDialog(
-                        AssignmentDetails.this, assignmentDeadline, myCalendarAssignmentDeadline
-                        .get(Calendar.YEAR), myCalendarAssignmentDeadline.get(Calendar.MONTH),
-                        myCalendarAssignmentDeadline.get(Calendar.DAY_OF_MONTH)).show();
+        editAssignmentDueDate.setOnClickListener(v -> {
+            Date date;
+            String info = editAssignmentDueDate.getText().toString();
+            if (info.equals("")) info = assignmentDueDate;
+            try {
+                myCalendarAssignmentDeadline.setTime(sdf.parse(info));
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
+            new DatePickerDialog(
+                    AssignmentDetails.this, assignmentDeadline, myCalendarAssignmentDeadline
+                    .get(Calendar.YEAR), myCalendarAssignmentDeadline.get(Calendar.MONTH),
+                    myCalendarAssignmentDeadline.get(Calendar.DAY_OF_MONTH)).show();
         });
 
-        assignmentDeadline = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                myCalendarAssignmentDeadline.set(Calendar.YEAR, year);
-                myCalendarAssignmentDeadline.set(Calendar.MONTH, monthOfYear);
-                myCalendarAssignmentDeadline.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                updateLabelAssignmentStart();
-            }
+        assignmentDeadline = (view, year, monthOfYear, dayOfMonth) -> {
+            myCalendarAssignmentDeadline.set(Calendar.YEAR, year);
+            myCalendarAssignmentDeadline.set(Calendar.MONTH, monthOfYear);
+            myCalendarAssignmentDeadline.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            updateLabelAssignmentStart();
         };
-
     }
 
     private void updateLabelAssignmentStart() {
@@ -174,32 +168,42 @@ public class AssignmentDetails extends AppCompatActivity {
                     course = crs;
                 }
             }
-            try {
-                Date assignmentDate = sdf.parse(assignmentDateString);
-                Date startDate = sdf.parse(course.getCourseStartDate());
-                Date endDate = sdf.parse(course.getCourseEndDate());
-                if (assignmentDate.before(startDate) || assignmentDate.after(endDate)) {
-                    Toast.makeText(this, "Assignment due date must be set during the associated class.", Toast.LENGTH_LONG).show();
-                    return true;
-                } else {
-                    Assignment assignment;
-                    if (assignmentID == -1) {
-                        if (repository.getmAllAssignments().size() == 0)
-                            assignmentID = 1;
-                        else
-                            assignmentID = repository.getmAllAssignments().get(repository.getmAllAssignments().size() - 1).getAssignmentID() + 1;
-                        assignment = new Assignment(assignmentID, editAssignmentName.getText().toString(), editAssignmentDueDate.getText().toString(), editAssignmentDescription.getText().toString(), courseID);
-                        repository.insert(assignment);
-                        this.finish();
+
+            // Make sure course is effectively final
+            final Course finalCourse = course;
+
+            // Use ExecutorService for background task
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.execute(() -> {
+                try {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+                    Date assignmentDate = dateFormat.parse(assignmentDateString);
+                    Date startDate = dateFormat.parse(finalCourse.getCourseStartDate()); // Use finalCourse
+                    Date endDate = dateFormat.parse(finalCourse.getCourseEndDate()); // Use finalCourse
+
+                    if (assignmentDate.before(startDate) || assignmentDate.after(endDate)) {
+                        runOnUiThread(() -> Toast.makeText(AssignmentDetails.this, "Assignment due date must be set during the associated class.", Toast.LENGTH_LONG).show());
                     } else {
-                        assignment = new Assignment(assignmentID, editAssignmentName.getText().toString(), editAssignmentDueDate.getText().toString(), editAssignmentDescription.getText().toString(), courseID);
-                        repository.update(assignment);
-                        this.finish();
+                        Assignment assignment;
+                        if (assignmentID == -1) {
+                            if (repository.getmAllAssignments().size() == 0)
+                                assignmentID = 1;
+                            else
+                                assignmentID = repository.getmAllAssignments().get(repository.getmAllAssignments().size() - 1).getAssignmentID() + 1;
+                            assignment = new Assignment(assignmentID, editAssignmentName.getText().toString(), assignmentDateString, editAssignmentDescription.getText().toString(), courseID);
+                            repository.insert(assignment);
+                        } else {
+                            assignment = new Assignment(assignmentID, editAssignmentName.getText().toString(), assignmentDateString, editAssignmentDescription.getText().toString(), courseID);
+                            repository.update(assignment);
+                        }
+
+                        runOnUiThread(() -> finish());
                     }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    runOnUiThread(() -> Toast.makeText(AssignmentDetails.this, "Invalid date format.", Toast.LENGTH_LONG).show());
                 }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            });
             return true;
         }
 
@@ -229,12 +233,10 @@ public class AssignmentDetails extends AppCompatActivity {
             Long trigger = myDate.getTime();
             Intent intent = new Intent(AssignmentDetails.this, MyReceiver.class);
             intent.putExtra("key", alert);
-//            PendingIntent sender = PendingIntent.getBroadcast(ExcursionDetails.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
             PendingIntent sender = PendingIntent.getBroadcast(AssignmentDetails.this, numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
             numAlert = rand.nextInt(99999);
-            System.out.println("numAlert Assignment = " + numAlert);
             Toast.makeText(AssignmentDetails.this, "Assignment Due Date Alert has been set", Toast.LENGTH_LONG).show();
             this.finish();
             return true;
@@ -248,5 +250,4 @@ public class AssignmentDetails extends AppCompatActivity {
         super.onResume();
         updateLabelAssignmentStart();
     }
-
 }

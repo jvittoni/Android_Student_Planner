@@ -144,11 +144,13 @@ public class CourseDetails extends AppCompatActivity {
         final AssignmentAdapter assignmentAdapter = new AssignmentAdapter(this);
         recyclerView.setAdapter(assignmentAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        List<Assignment> filteredAssignments = new ArrayList<>();
+//        List<Assignment> filteredAssignments = new ArrayList<>();
         for (Assignment a :repository.getmAllAssignments()) {
             if (a.getCourseID() == courseID) filteredAssignments.add(a);
         }
         assignmentAdapter.setAssignments(filteredAssignments);
+
+
 
         // Handle Null
         if (courseStartDate != null) {
