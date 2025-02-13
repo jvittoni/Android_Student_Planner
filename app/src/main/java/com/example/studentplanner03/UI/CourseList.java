@@ -97,11 +97,19 @@ public class CourseList extends AppCompatActivity {
 
             return true;
         }
+
+        if (item.getItemId() == R.id.myGenerateReport) {
+            Intent intent = new Intent(this, ReportGenerator.class);
+            startActivity(intent);
+            return true;
+        }
+
         if(item.getItemId() == android.R.id.home) {
             this.finish();
             return true;
         }
-        return true;
+        //return true;
+        return super.onOptionsItemSelected(item);
     }
 
 }

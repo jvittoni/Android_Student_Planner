@@ -10,6 +10,7 @@ import com.example.studentplanner03.entities.Course;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Repository {
     private AssignmentDAO mAssignmentDAO;
@@ -26,6 +27,21 @@ public class Repository {
         mAssignmentDAO = db.assignmentDAO();
         mCourseDAO = db.courseDAO();
     }
+
+    // ------------ Report Generator ---------------
+    public Course getCourseById(int courseID) {
+        AtomicReference<Course> course = new AtomicReference<>();
+        databaseExecutor.execute(() -> {
+            course.set(mCourseDAO.getCourseById(courseID));
+        });
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return course.get();
+    }
+
 
     // --------------- COURSES ---------------------
 
