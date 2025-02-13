@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -26,6 +27,9 @@ import java.util.List;
 public class CourseList extends AppCompatActivity {
 
     private Repository repository;
+
+    private CourseAdapter courseAdapter;
+    private String currentSearchQuery = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +54,43 @@ public class CourseList extends AppCompatActivity {
             }
         });
 
+//        RecyclerView recyclerView = findViewById(R.id.courseRecyclerView);
+//        repository = new Repository(getApplication());
+//        List<Course> allCourses = repository.getmAllCourses();
+//        final CourseAdapter courseAdapter = new CourseAdapter(this);
+//        recyclerView.setAdapter(courseAdapter);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        courseAdapter.setCourses(allCourses);
+
+        // Set up RecyclerView
         RecyclerView recyclerView = findViewById(R.id.courseRecyclerView);
         repository = new Repository(getApplication());
-        List<Course> allCourses = repository.getmAllCourses();
-        final CourseAdapter courseAdapter = new CourseAdapter(this);
+        courseAdapter = new CourseAdapter(this);
         recyclerView.setAdapter(courseAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Fetch courses from the database and set to adapter
+        List<Course> allCourses = repository.getmAllCourses();
         courseAdapter.setCourses(allCourses);
+
+        // Set up SearchView
+        SearchView searchView = findViewById(R.id.searchView);
+        searchView.setQuery(currentSearchQuery, false);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                currentSearchQuery = query;
+                courseAdapter.filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                currentSearchQuery = newText;
+                courseAdapter.filter(newText);
+                return false;
+            }
+        });
 
     }
 
@@ -69,12 +103,36 @@ public class CourseList extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        List<Course> allCourses = repository.getmAllCourses();
-        RecyclerView recyclerView = findViewById(R.id.courseRecyclerView);
-        final CourseAdapter courseAdapter = new CourseAdapter(this);
-        recyclerView.setAdapter(courseAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        courseAdapter.setCourses(allCourses);
+//        List<Course> allCourses = repository.getmAllCourses();
+//        RecyclerView recyclerView = findViewById(R.id.courseRecyclerView);
+//        final CourseAdapter courseAdapter = new CourseAdapter(this);
+//        recyclerView.setAdapter(courseAdapter);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        courseAdapter.setCourses(allCourses);
+
+
+//        List<Course> allCourses = repository.getmAllCourses();
+//        courseAdapter.setCourses(allCourses);
+
+        if (!currentSearchQuery.isEmpty()) {
+            courseAdapter.filter(currentSearchQuery);
+        } else {
+            List<Course> allCourses = repository.getmAllCourses();
+            courseAdapter.setCourses(allCourses);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SearchView searchView = findViewById(R.id.searchView);
+        currentSearchQuery = searchView.getQuery().toString();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        currentSearchQuery = "";
     }
 
     @Override

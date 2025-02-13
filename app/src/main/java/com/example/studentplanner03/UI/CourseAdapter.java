@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.studentplanner03.R;
 import com.example.studentplanner03.entities.Course;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseViewHolder> {
@@ -20,6 +21,8 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     private List<Course> mCourses;
     private final Context context;
     private final LayoutInflater mInflater;
+
+    private List<Course> mAllCourses;
 
     public CourseAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
@@ -64,8 +67,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
             Course current = mCourses.get(position);
             String crseName = current.getCourseName();
             holder.courseItemView.setText(crseName);
-        }
-        else {
+        } else {
             holder.courseItemView.setText("No class name");
         }
     }
@@ -74,14 +76,33 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     public int getItemCount() {
         if (mCourses != null) {
             return mCourses.size();
-        }
-        else return 0;
+        } else return 0;
     }
 
+    //    public void setCourses(List<Course> courses) {
+//        mCourses = courses;
+//        notifyDataSetChanged();
+//    }
     public void setCourses(List<Course> courses) {
         mCourses = courses;
+        mAllCourses = new ArrayList<>(courses); // Save the full list for later
         notifyDataSetChanged();
     }
 
+    // Method to filter courses based on search query
+    public void filter(String query) {
+        List<Course> filteredList = new ArrayList<>();
+        if (query.isEmpty()) {
+            filteredList.addAll(mAllCourses); // Show all courses if query is empty
+        } else {
+            for (Course course : mAllCourses) {
+                if (course.getCourseName().toLowerCase().contains(query.toLowerCase())) {
+                    filteredList.add(course);
+                }
+            }
+        }
+        mCourses = filteredList;
+        notifyDataSetChanged();
+    }
 
 }
