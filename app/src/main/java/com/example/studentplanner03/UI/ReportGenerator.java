@@ -18,7 +18,10 @@ import com.example.studentplanner03.database.Repository;
 import com.example.studentplanner03.entities.Assignment;
 import com.example.studentplanner03.entities.Course;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ReportGenerator extends AppCompatActivity {
 
@@ -54,6 +57,9 @@ public class ReportGenerator extends AppCompatActivity {
         int selectedReportType = reportTypeGroup.getCheckedRadioButtonId();
         reportTable.removeAllViews();
 
+        TextView timestampTextView = findViewById(R.id.timestampTextView);
+        timestampTextView.setText("");
+
         if (selectedReportType == R.id.courseReport) {
             titleOfReport.setText("Class Report");
             generateCourseReport();
@@ -64,6 +70,10 @@ public class ReportGenerator extends AppCompatActivity {
             titleOfReport.setText("Class and Assignment Report");
             generateCourseAndAssignmentReport();
         }
+
+        String currentDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+        String timestampText = "Report Generated: " + currentDateTime;
+        timestampTextView.setText(timestampText);
     }
 
     // Course Report
@@ -136,7 +146,7 @@ public class ReportGenerator extends AppCompatActivity {
     private TextView createTextView(String text) {
         TextView textView = new TextView(this);
         textView.setText(text);
-        textView.setPadding(8, 8, 8, 8);
+        textView.setPadding(18, 12, 18, 12);
         textView.setTextSize(16);
         textView.setBackgroundResource(R.drawable.tableborder);
         return textView;
