@@ -35,8 +35,12 @@ dependencies {
     implementation libs.activity
     implementation libs.constraintlayout
     testImplementation libs.junit
+    testImplementation libs.core
+    testImplementation libs.ext.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+    testImplementation libs.mockito.core
+    testImplementation libs.robolectric
 
     // Room components
     implementation "androidx.room:room-runtime:$rootProject.roomVersion"
