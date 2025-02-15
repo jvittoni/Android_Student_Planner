@@ -16,10 +16,7 @@ import java.util.Locale;
 public class CourseDetailsTest {
 
 
-    @Before
-    public void setUp() throws Exception {
 
-    }
 
     @Test
     public void testEndDateIsAfterStartDate() throws ParseException {
